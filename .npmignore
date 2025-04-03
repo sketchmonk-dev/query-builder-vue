@@ -1,0 +1,7 @@
+.storybook
+.vscode
+node_modules
+lib
+src
+public
+!dist
