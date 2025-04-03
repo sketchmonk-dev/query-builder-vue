@@ -3,7 +3,7 @@ import {
   QueryBuilderRule,
   QueryBuilderRuleFieldSelector,
   QueryBuilderRuleOperatorSelector,
-  QueryBuilderRuleValueSelector,
+  QueryBuilderRuleValueInput,
   type Rule,
 } from "../../../lib";
 
@@ -47,7 +47,7 @@ defineEmits<{
               </option>
             </select>
           </QueryBuilderRuleOperatorSelector>
-          <QueryBuilderRuleValueSelector
+          <QueryBuilderRuleValueInput
             v-slot="{ field, value, onChange, disabled }"
           >
             <template v-if="field.type === 'string'">
@@ -80,7 +80,7 @@ defineEmits<{
                 </option>
               </select>
             </template>
-          </QueryBuilderRuleValueSelector>
+          </QueryBuilderRuleValueInput>
           <button @click="$emit('remove')" type="button">
             Remove
           </button>
