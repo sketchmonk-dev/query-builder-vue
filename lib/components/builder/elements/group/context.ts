@@ -95,7 +95,15 @@ export function useProvideQueryBuilderGroup(group: Ref<RuleGroup>) {
             id: generateRandomUUID(),
             combinator: config.value.defaultCombinator,
             not: false,
-            rules: [],
+            rules: [
+                {
+                    type: 'rule',
+                    id: generateRandomUUID(),
+                    field: '',
+                    operator: '',
+                    value: null,
+                }
+            ],
         };
         group.value = produce(group.value, (draft) => {
             draft.rules.splice(index, 0, newGroup);
