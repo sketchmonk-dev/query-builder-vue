@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Rule } from '../../../../common';
 import { generateRandomUUID } from '../../../../utils';
+import { useQueryBuilder } from '../../context';
 import { useProvideQueryBuilderRule } from './context';
 
 const rule = defineModel<Rule>({
@@ -12,8 +13,10 @@ const rule = defineModel<Rule>({
     }),
 })
 
+const { disabled } = useQueryBuilder ();
+
 useProvideQueryBuilderRule(rule);
 </script>
 <template>
-    <slot :rule="rule" />
+    <slot :disabled="disabled" :rule="rule" />
 </template>
