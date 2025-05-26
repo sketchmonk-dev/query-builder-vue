@@ -1,4 +1,3 @@
-import { produce } from "immer";
 import { inject, provide, type Ref } from "vue";
 import type { QueryField, QueryOperator, Rule, ValueType } from "../../../../common";
 import { useQueryBuilder } from "../../context";
@@ -24,45 +23,42 @@ export function useProvideQueryBuilderRule<TValue = any>(rule: Ref<Rule<TValue>>
         return qb.getField(rule.value.field)
     }
     const setField = (fieldName: string) => {
-        rule.value = produce(rule.value, (draft) => {
-            draft.field = fieldName;
-            // update operator if it is not available for the new field
-            const field = qb.getField(fieldName);
-            if (field) {
-                const operators = field.operators;
-                if (!operators.some((o) => o.name === rule.value.operator)) {
-                    draft.operator = field.defaultOperator || operators[0].name;
-                }
-                if (field.defaultValue) {
-                    const operator = qb.getOperator(fieldName, draft.operator);
-                    if (operator) {
-                        const value = field.defaultValue({ operator });
-                        if (value !== undefined) {
-                            draft.value = value;
-                        }
-                    }
+        const updatedRule = { ...rule.value, field: fieldName };
+        const field = qb.getField(fieldName);
+        if (field) {
+            const operators = field.operators;
+            if (!operators.some((o) => o.name === rule.value.operator)) {
+            updatedRule.operator = field.defaultOperator || operators[0].name;
+            }
+            if (field.defaultValue) {
+            const operator = qb.getOperator(fieldName, updatedRule.operator);
+            if (operator) {
+                const value = field.defaultValue({ operator });
+                if (value !== undefined) {
+                updatedRule.value = value;
                 }
             }
-        });
+            }
+        }
+        rule.value = updatedRule;
     }
 
     const getOperator = () => {
         return qb.getOperator(rule.value.field, rule.value.operator)
     }
     const setOperator = (operatorName: string) => {
-        rule.value = produce(rule.value, (draft) => {
-            draft.operator = operatorName;
-            const field = qb.getField(rule.value.field);
-            if (field) {
-                const operator = field.operators.find((o) => o.name === operatorName);
-                if (operator && field.defaultValue) {
-                    const value = field.defaultValue({ operator });
-                    if (value !== undefined) {
-                        draft.value = value;
-                    }
-                }
+        const updatedRule = { ...rule.value, operator: operatorName };
+        const field = qb.getField(rule.value.field);
+        if (field) {
+            const operator = field.operators.find((o) => o.name === operatorName);
+            if (operator && field.defaultValue) {
+            const value = field.defaultValue({ operator });
+            if (value !== undefined) {
+                updatedRule.value = value;
             }
-        });
+            }
+        }
+        rule.value = updatedRule;
     }
 
     const getValue = () => {

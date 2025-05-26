@@ -1,4 +1,3 @@
-import { produce } from "immer";
 import { inject, provide, type Ref } from "vue";
 import type { Rule, RuleCombinator, RuleGroup } from "../../../../common";
 import { generateRandomUUID } from "../../../../utils";
@@ -83,9 +82,12 @@ export function useProvideQueryBuilderGroup(group: Ref<RuleGroup>) {
             operator: "",
             value: null,
         };
-        group.value = produce(group.value, (draft) => {
-            draft.rules.splice(index, 0, rule);
-        });
+        const updatedRules = [...group.value.rules];
+        updatedRules.splice(index, 0, rule);
+        group.value = {
+            ...group.value,
+            rules: updatedRules,
+        };
     }
 
     const addGroup = (index?: number) => {
@@ -105,21 +107,30 @@ export function useProvideQueryBuilderGroup(group: Ref<RuleGroup>) {
                 }
             ],
         };
-        group.value = produce(group.value, (draft) => {
-            draft.rules.splice(index, 0, newGroup);
-        });
+        const updatedRules = [...group.value.rules];
+        updatedRules.splice(index, 0, newGroup);
+        group.value = {
+            ...group.value,
+            rules: updatedRules,
+        };
     }
 
     const removeRule = (index?: number) => {
         index = index ?? group.value.rules.length - 1;
-        group.value = produce(group.value, (draft) => {
-            draft.rules.splice(index, 1);
-        });
+        const updatedRules = [...group.value.rules];
+        updatedRules.splice(index, 1);
+        group.value = {
+            ...group.value,
+            rules: updatedRules,
+        };
     }
     const updateRule = (index: number, rule: Rule | RuleGroup) => {
-        group.value = produce(group.value, (draft) => {
-            draft.rules[index] = rule;
-        });
+        const updatedRules = [...group.value.rules];
+        updatedRules[index] = rule;
+        group.value = {
+            ...group.value,
+            rules: updatedRules,
+        };
     }
 
     const context: RuleGroupContext = {
